@@ -34,7 +34,30 @@ request(`https://api.freegeoip.app/json/${ip}?apikey=${apiKey}`, (error,response
   });
 };
 
-module.exports = { fetchMyIP,fetchCoordsByIP};
+
+/**
+ * Makes a single API request to retrieve upcoming ISS fly over times the for the given lat/lng coordinates.
+ * Input:
+ *   - An object with keys `latitude` and `longitude`
+ *   - A callback (to pass back an error or the array of resulting data)
+ * Returns (via Callback):
+ *   - An error, if any (nullable)
+ *   - The fly over times as an array of objects (null if error). Example:
+ *     [ { risetime: 134564234, duration: 600 }, ... ]
+ */
+ const fetchISSFlyOverTimes = (coords, cb) => {
+  request(`https://iss-pass.herokuapp.com/json/?lat=${coords['latitude']}&lon=${coords['longitude']}`, (error,response,body) =>{
+    if (error) {
+      cb(error);
+    }
+    const parsedFlyover = JSON.parse(body);
+    const flyOver = parsedFlyover["response"];
+    cb(flyOver);
+  });
+};
+module.exports = { fetchMyIP,fetchCoordsByIP,fetchISSFlyOverTimes };
+
+
 
 
 
